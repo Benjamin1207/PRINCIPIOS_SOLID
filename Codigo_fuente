@@ -1,0 +1,67 @@
+1.	Obtención de datos:
+
+import axios from 'axios';
+
+const WeatherAPI = async () => {
+  try {
+    const response = await axios.get('https://api.weather.com/forecast');
+    // Procesar la respuesta y devolver los datos relevantes
+    return response.data;
+  } catch (error) {
+    // Manejar errores de solicitud o respuesta
+    console.error('Error al obtener los datos del clima:', error);
+    return null;
+  }
+};
+
+export default WeatherAPI;
+
+2.	Presentación de la información:
+
+import React from 'react';
+import { Text, View } from 'react-native';
+
+const WeatherDisplay = ({ weatherData }) => {
+  if (!weatherData) {
+    return <Text>No se pudieron obtener los datos del clima.</Text>;
+  }
+
+  return (
+    <View>
+      <Text>Temperatura actual: {weatherData.currentTemperature}°C</Text>
+      <Text>Pronóstico para los próximos días:</Text>
+      {weatherData.forecast.map((day) => (
+        <Text key={day.date}>
+          {day.date}: {day.temperature}°C
+        </Text>
+      ))}
+    </View>
+  );
+};
+
+export default WeatherDisplay;
+
+3.	Componente principal:
+
+import React, { useEffect, useState } from 'react';
+import WeatherAPI from './WeatherAPI';
+import WeatherDisplay from './WeatherDisplay';
+
+const App = () => {
+  const [weatherData, setWeatherData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await WeatherAPI();
+      setWeatherData(data);
+    };
+
+    fetchData();
+  }, []);
+
+  return <WeatherDisplay weatherData={weatherData} />;
+};
+
+export default App;
+
+
